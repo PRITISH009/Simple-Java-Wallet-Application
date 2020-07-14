@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService{
 		int amount;
 		int accountBalance = dao.showBalance(accountNo);
 		do {
+			System.out.println("Account Balance - " + accountBalance);
 			System.out.println("Please Enter the amount you want to Transfer..");
 			amount = Integer.parseInt(App.getSc().nextLine());
 			
@@ -191,7 +192,6 @@ public class UserServiceImpl implements UserService{
 			}else {
 				System.out.println("Either Your User ID or Password was incorrect.. Please re-enter you credentials");
 			}
-			checkRequired = false;
 			
 		}while(checkRequired);
 		
@@ -266,7 +266,7 @@ public class UserServiceImpl implements UserService{
 			
 			if(dao.checkIfAccountExists(recieverAccountNo)) {
 				//pay to the account.. Check the amount that is being requested to transfer...
-				amount = getAmount(recieverAccountNo);
+				amount = getAmount(senderAccountNo);
 				dao.sendMoney(senderAccountNo, recieverAccountNo, amount);
 				recieverAccountCheckRequired = false;
 			}else {

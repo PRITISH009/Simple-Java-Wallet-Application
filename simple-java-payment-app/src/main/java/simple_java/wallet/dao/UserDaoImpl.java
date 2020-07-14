@@ -134,6 +134,8 @@ public class UserDaoImpl implements UserDao{
 				+ "set AccountBalance = AccountBalance + ? "
 				+ "where AccountNo = ?;";
 		
+		String logTransactionQuery = "insert into transactionlogs(SenderAcc, RecieverAcc, Amount) values(?,?,?);";
+		
 		// To Debit Money from Sender
 		try {
 			PreparedStatement prDebit = connection.prepareStatement(debitMoneyFromSenderQuery);
@@ -151,6 +153,17 @@ public class UserDaoImpl implements UserDao{
 			prCredit.setInt(1, amount);
 			prCredit.setInt(2, recieverAccountNo);
 			prCredit.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			PreparedStatement log = connection.prepareStatement(logTransactionQuery);
+			log.setInt(1, senderAccountNo);
+			log.setInt(2, recieverAccountNo);
+			log.setInt(3, amount);
+			log.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -181,6 +194,7 @@ public class UserDaoImpl implements UserDao{
 	@Override
 	public void creditToOwnAccount(int accountNo, int amount) {
 		String addMoneyToAccountQuery = "update useraccounts set AccountBalance = AccountBalance + ? where AccountNo = ?";
+		String creditToOwnAccountLogQuery = "insert into transactionlogs(SenderAcc, RecieverAcc, Amount) values(?,?,?)";
 		try {
 			PreparedStatement pr = connection.prepareStatement(addMoneyToAccountQuery);
 			pr.setInt(1, amount);
@@ -192,5 +206,16 @@ public class UserDaoImpl implements UserDao{
 			e.printStackTrace();
 		}
 		
+		try {
+			PreparedStatement log = connection.prepareStatement(creditToOwnAccountLogQuery);
+			log.setInt(1,accountNo);
+			log.setInt(2, accountNo);
+			log.setInt(3, amount);
+			log.executeUpdate();
+			log.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
